@@ -15,6 +15,9 @@ async def create_article(article: Article):
     except DuplicateKeyError:
         logger.warning(f'Article %s already exists', article.url)
 
+async def get_all_articles():
+    data = db['articles'].find({})
+    return [i async for i in data]
 
 async def get_article_by_url(url: str):
     return await db['articles'].find_one({'url': url})
