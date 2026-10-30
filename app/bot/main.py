@@ -7,6 +7,7 @@ from app.bot.handlers.news import router_news
 from app.bot.handlers.sourses import router_url
 from app.bot.handlers.start import router
 from app.bot.middlewares.admin import AdminMiddleware
+from app.bot.services.api_client import ApiClient
 from app.core.config import BOT_TOKEN
 
 dp = Dispatcher()
@@ -18,7 +19,13 @@ dp.include_router(router_moderation)
 
 async def main():
     bot = Bot(token=BOT_TOKEN)
-    await dp.start_polling(bot)
+    api_client = ApiClient()
+
+    try:
+        await dp.start_polling(bot, api_client = api_client)
+    finally:
+        await api_client.close()
+        await bot.session.close()
 
 if __name__ == '__main__':
     asyncio.run(main())
